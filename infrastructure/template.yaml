@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS Billing Reminder System
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+    Description: Environment name
+  S3Bucket:
+    Type: String
+    Description: S3 bucket containing the Lambda function deployment package
+  S3Key:
+    Type: String
+    Description: S3 key for the Lambda function deployment package
+  EmailAddress:
+    Type: String
+    Description: Email address to receive billing alerts
+
+Resources:
+  BillingAlertFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../src/aws_billing_reminder/lambda/billing_alert
+      Handler: main.handler
+      Runtime: python3.13
+      Timeout: 30
+      MemorySize: 256
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - ce:GetCostAndUsage
+                - sns:Publish
+              Resource: '*'
+      Environment:
+        Variables:
+          SNS_TOPIC_ARN: !Ref BillingAlertTopic
+
+  BillingAlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: AWS Billing Alert
+      TopicName: aws-billing-alert
+
+  BillingAlertTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: email
+      TopicArn: !Ref BillingAlertTopic
+      Endpoint: !Ref EmailAddress
+
+  BillingAlertRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: "Daily trigger for AWS billing alert"
+      ScheduleExpression: "cron(0 22 * * ? *)" # 5 AM GMT+7 (22:00 UTC previous day)
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt BillingAlertFunction.Arn
+          Id: "BillingAlertLambda"
+
+  BillingAlertPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref BillingAlertFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt BillingAlertRule.Arn
