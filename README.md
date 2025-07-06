@@ -4,7 +4,7 @@ This project implements an automated AWS billing reminder system using AWS Event
 
 ## Architecture
 
-- AWS EventBridge triggers the Lambda function daily at 12:00 PM UTC
+- AWS EventBridge triggers the Lambda function daily at 22:00 PM UTC
 - Lambda function fetches billing information using AWS Cost Explorer API
 - AWS SNS sends the billing information via email to subscribed users
 

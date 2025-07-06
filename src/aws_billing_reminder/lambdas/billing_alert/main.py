@@ -1,7 +1,7 @@
 import json
 from datetime import datetime, timedelta
-from cost_explorer import get_cost_data, create_cost_message
-from notification import send_notification
+from aws_billing_reminder.lambdas.billing_alert.cost_explorer import get_cost_data, create_cost_message
+from aws_billing_reminder.lambdas.billing_alert.notification import send_notification
 
 def handler(event, context):
     try:

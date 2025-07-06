@@ -8,7 +8,7 @@ billing-reminder/
 ├── src/
 │   ├── aws_billing_reminder/
 │   │   ├── __init__.py
-│   │   ├── lambda/
+│   │   ├── lambdas/
 │   │   │   ├── billing_alert/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── main.py

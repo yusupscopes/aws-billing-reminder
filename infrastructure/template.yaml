@@ -25,7 +25,7 @@ Resources:
   BillingAlertFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../src/aws_billing_reminder/lambda/billing_alert
+      CodeUri: ../src/aws_billing_reminder/lambdas/billing_alert
       Handler: main.handler
       Runtime: python3.13
       Timeout: 30
