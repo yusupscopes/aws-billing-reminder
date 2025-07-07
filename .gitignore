@@ -24,3 +24,5 @@ var/
 .env
 .venv
 .coverage
+package/
+function.zip

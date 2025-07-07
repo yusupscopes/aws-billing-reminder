@@ -22,26 +22,61 @@ Parameters:
     Description: Email address to receive billing alerts
 
 Resources:
-  BillingAlertFunction:
-    Type: AWS::Serverless::Function
+  # IAM Role for Lambda
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
     Properties:
-      CodeUri: ../src/aws_billing_reminder/lambdas/billing_alert
-      Handler: main.handler
+      RoleName: !Sub aws-billing-reminder-${Environment}-lambda-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub aws-billing-reminder-${Environment}-logs-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+        - PolicyName: !Sub aws-billing-reminder-${Environment}-sns-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Ref BillingAlertTopic
+
+  BillingAlertFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub aws-billing-reminder-${Environment}
+      Handler: app.main.handler
+      Code:
+        S3Bucket: !Ref S3Bucket
+        S3Key: !Ref S3Key
       Runtime: python3.13
       Timeout: 30
       MemorySize: 256
-      Policies:
-        - AWSLambdaBasicExecutionRole
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - ce:GetCostAndUsage
-                - sns:Publish
-              Resource: '*'
+      Architectures:
+        - arm64
+      Role: !GetAtt LambdaExecutionRole.Arn
       Environment:
         Variables:
           SNS_TOPIC_ARN: !Ref BillingAlertTopic
+  
+  BillingAlertLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/aws-billing-reminder-${Environment}"
+      RetentionInDays: 7
 
   BillingAlertTopic:
     Type: AWS::SNS::Topic
@@ -59,6 +94,7 @@ Resources:
   BillingAlertRule:
     Type: AWS::Events::Rule
     Properties:
+      Name: aws-billing-reminder-rule
       Description: "Daily trigger for AWS billing alert"
       ScheduleExpression: "cron(0 22 * * ? *)" # 5 AM GMT+7 (22:00 UTC previous day)
       State: ENABLED

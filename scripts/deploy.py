@@ -50,7 +50,7 @@ def deploy(environment, region, profile):
     ])
     
     # Copy application code
-    shutil.copytree('src', 'package/src')
+    shutil.copytree('app', 'package/app')
     
     # Create deployment ZIP
     shutil.make_archive('function', 'zip', 'package')
@@ -98,7 +98,7 @@ def deploy(environment, region, profile):
                     'ParameterValue': email_address
                 }
             ],
-            Capabilities=['CAPABILITY_IAM']
+            Capabilities=['CAPABILITY_IAM', 'CAPABILITY_AUTO_EXPAND', 'CAPABILITY_NAMED_IAM']
         )
         print("Stack creation initiated. Check AWS Console for status.")
     except cfn.exceptions.AlreadyExistsException:
@@ -125,7 +125,7 @@ def deploy(environment, region, profile):
                     'ParameterValue': email_address
                 }
             ],
-            Capabilities=['CAPABILITY_IAM']
+            Capabilities=['CAPABILITY_IAM', 'CAPABILITY_AUTO_EXPAND', 'CAPABILITY_NAMED_IAM']
         )
         print("Stack update initiated. Check AWS Console for status.")
 

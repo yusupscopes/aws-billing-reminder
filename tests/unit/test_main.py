@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from unittest.mock import patch, MagicMock
-from aws_billing_reminder.lambdas.billing_alert.main import handler, create_cost_message
+from app.main import handler, create_cost_message
 
 def test_handler_success(ce_client, sns_client):
     # Mock response from Cost Explorer

@@ -1,19 +1,16 @@
 [project]
 name = "aws-billing-reminder"
 version = "0.1.0"
-description = ""
+description = "AWS Billing Reminder cloud-native application"
 authors = [
     {name = "yusupscopes",email = "yusupmaulana950@gmail.com"}
 ]
+packages = [{include = "app"}]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "boto3 (==1.26.137)"
 ]
-
-[tool.poetry]
-packages = [{include = "aws_billing_reminder", from = "src"}]
-
 
 [tool.poetry.group.dev.dependencies]
 pytest = "7.3.1"

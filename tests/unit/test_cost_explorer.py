@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime
-from aws_billing_reminder.lambdas.billing_alert.cost_explorer import get_cost_data, create_cost_message
+from app.services.cost_explorer import get_cost_data, create_cost_message
 from unittest.mock import patch, MagicMock
 
 def test_get_cost_data(ce_client):

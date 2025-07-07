@@ -4,9 +4,9 @@ import json
 from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
 
-from aws_billing_reminder.lambdas.billing_alert.main import handler
-from aws_billing_reminder.lambdas.billing_alert.cost_explorer import get_cost_data
-from aws_billing_reminder.lambdas.billing_alert.notification import send_notification
+from app.main import handler
+from app.services.cost_explorer import get_cost_data
+from app.services.notification import send_notification
 
 def get_mock_ce_response():
     return {

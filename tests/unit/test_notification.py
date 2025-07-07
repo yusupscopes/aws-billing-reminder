@@ -1,6 +1,6 @@
 import pytest
 import os
-from aws_billing_reminder.lambdas.billing_alert.notification import send_notification
+from app.services.notification import send_notification
 
 def test_send_notification(sns_client):
     # Test message
