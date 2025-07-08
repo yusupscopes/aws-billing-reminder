@@ -53,6 +53,15 @@ Resources:
                 Action:
                   - sns:Publish
                 Resource: !Ref BillingAlertTopic
+        - PolicyName: !Sub aws-billing-reminder-${Environment}-cost-explorer-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ce:GetCostAndUsageWithResources
+                  - ce:GetCostAndUsage
+                Resource: "*"
 
   BillingAlertFunction:
     Type: AWS::Lambda::Function

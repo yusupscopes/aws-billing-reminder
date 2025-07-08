@@ -48,9 +48,18 @@ def deploy(environment, region, profile):
         '--target', 'package',
         '-r', 'requirements.txt'
     ])
+
+    # Clean up any existing __pycache__ directories first
+    for root, dirs, files in os.walk('app'):
+        if '__pycache__' in dirs:
+            shutil.rmtree(os.path.join(root, '__pycache__'))
+    
+    # Copy application code while ignoring __pycache__
+    def ignore_patterns(path, names):
+        return ['__pycache__', '*.pyc', '*.pyo', '*.pyd']
     
     # Copy application code
-    shutil.copytree('app', 'package/app')
+    shutil.copytree('app', 'package/app', ignore=ignore_patterns)
     
     # Create deployment ZIP
     shutil.make_archive('function', 'zip', 'package')
