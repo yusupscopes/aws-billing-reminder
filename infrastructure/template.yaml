@@ -67,7 +67,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Sub aws-billing-reminder-${Environment}
-      Handler: app.main.handler
+      Handler: app.main.lambda_handler
       Code:
         S3Bucket: !Ref S3Bucket
         S3Key: !Ref S3Key
