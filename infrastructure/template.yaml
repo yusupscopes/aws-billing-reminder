@@ -105,7 +105,7 @@ Resources:
     Properties:
       Name: aws-billing-reminder-rule
       Description: "Daily trigger for AWS billing alert"
-      ScheduleExpression: "cron(0 22 * * ? *)" # 5 AM GMT+7 (22:00 UTC previous day)
+      ScheduleExpression: "cron(0 22 ? * 7 *)" # Run every Sunday at 5 AM GMT+7 (22:00 UTC previous day)
       State: ENABLED
       Targets:
         - Arn: !GetAtt BillingAlertFunction.Arn
